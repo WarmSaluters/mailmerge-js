@@ -32,20 +32,20 @@ export const question = (promptString: string) => {
     return new InputPrompt(chalk.bold(promptString));
 }
 
-export const continueOrSkip = (promptString: string, opts?: { defaultYes: boolean }) => {
-    const defaultYes = opts?.defaultYes ?? true;
-    const suffix = defaultYes ? '[Y/n]' : '[y/N]';
-    const continuingAnswerLowercase = defaultYes ? 'y' : 'n';
+export const continueOrSkip = (promptString: string, opts?: { default: 'y' | 'n' }) => {
+    const _default = opts?.default ?? 'y';
+    const suffix = _default === 'y' ? '[Y/n]' : '[y/N]';
 
     return new InputPrompt(chalk.bold(promptString) + suffix + " ")
     .onInput((input) => {
-        let shouldContinue = false;
 
-        if (input.toLowerCase() === continuingAnswerLowercase) {
-            shouldContinue = true;
+        let shouldContinue = _default === 'y' ? true : false;
+
+        if (input.toLowerCase() === 'y') {
+            shouldContinue = true
         }
-        else if (input.toLowerCase() === '') {
-            shouldContinue = defaultYes;
+        else if (input.toLowerCase() === 'n') {
+            shouldContinue = false;
         }
 
         return shouldContinue;

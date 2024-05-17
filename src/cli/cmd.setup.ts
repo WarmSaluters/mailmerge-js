@@ -10,7 +10,7 @@ export default function SetupCommand(program: Command) {
         .action(async () => {
 
             const displayKey = chalk.blue("\n[Current API Key]: ", formatSensitiveData(Config.openaiAPIKey));
-            const configureOpenAI = await continueOrSkip("Set up OpenAI API key? " + displayKey + " ", { defaultYes: !Config.openaiAPIKey }).prompt();
+            const configureOpenAI = await continueOrSkip("Set up OpenAI API key? " + displayKey + " ", { default: Config.openaiAPIKey ? 'n' : 'y' }).prompt();
 
             if (configureOpenAI) {
                 await question("> Enter your OpenAI API key: ")
