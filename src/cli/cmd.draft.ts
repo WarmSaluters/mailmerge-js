@@ -5,6 +5,6 @@ export default function DraftCommand(program: Command) {
         .command('draft')
         .description('Draft emails')
         .action(() => {
-            console.log('Drafting emails...');
+            console.log('Todo: Drafting emails...');
         });
 }

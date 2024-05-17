@@ -5,7 +5,7 @@ export default function SendCommand(program: Command) {
         .command('send')
         .description('Send a message to a list of recipients')
         .action(() => {
-            console.log('Send a message to a list of recipients');
+            console.log('Todo: Send a message to a list of recipients');
         });
 }
 
