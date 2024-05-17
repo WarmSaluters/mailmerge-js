@@ -9,8 +9,8 @@ export default function SetupCommand(program: Command) {
         .description('Configure the CLI.')
         .action(async () => {
 
-            const displayKey = chalk.blue("\n[Current API Key]: ", formatSensitiveData(Config.openaiAPIKey ?? '<NOT SET>'));
-            const configureOpenAI = await continueOrSkip("Set up OpenAI API key? " + displayKey + " ").prompt();
+            const displayKey = chalk.blue("\n[Current API Key]: ", formatSensitiveData(Config.openaiAPIKey));
+            const configureOpenAI = await continueOrSkip("Set up OpenAI API key? " + displayKey + " ", { defaultYes: !Config.openaiAPIKey }).prompt();
 
             if (configureOpenAI) {
                 await question("> Enter your OpenAI API key: ")
@@ -36,7 +36,10 @@ export default function SetupCommand(program: Command) {
 }
 
 
-const formatSensitiveData = (data: string) => {
+const formatSensitiveData = (data: string | undefined) => {
+    if (!data) {
+        return chalk.red('<NOT SET>');
+    }
     // Show first 4 characters, then replace with ****
     return data.slice(0, 4) + '****';
 }
