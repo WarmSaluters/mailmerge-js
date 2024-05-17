@@ -6,6 +6,7 @@ import ora from 'ora';
 import chalk from "chalk";
 import fs from 'fs';
 import { continueOrSkip, question } from "./prompt.js";
+import readline from 'readline';
 
 export default function DraftCommand(program: Command) {
     //@ts-ignore
@@ -74,7 +75,6 @@ class EmailPreviewer {
     show() {
         return new Promise<void>((resolve, reject) => {
             this.render();
-            const readline = require('readline');
 
             // Create readline interface
             const rl = readline.createInterface({
@@ -83,6 +83,7 @@ class EmailPreviewer {
             });
 
             // Function to handle key press
+            // @ts-ignore
             rl.input.on('keypress', (str: string, key: any) => {
                 // You can add your logic here to handle the key press
 
