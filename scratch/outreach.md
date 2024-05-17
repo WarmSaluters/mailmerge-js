@@ -1,5 +1,5 @@
-# Subject - 
-
+# Subject 
+<< insert an appropriate title of your choosing >>
 
 # Body
 

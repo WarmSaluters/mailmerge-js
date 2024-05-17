@@ -134,7 +134,7 @@ class EmailPreviewer {
             chalk.bold(`Displaying email ${index + 1} of ${total}`) + '\n' +
             `${chalk.bold(`-`.repeat(process.stdout.columns))}` + '\n' +
             `${chalk.bold.cyan(`Subject: ${chalk.yellowBright(email.subject)}`)}\n` +
-            `To: ${chalk.bold.cyan(`<${chalk.yellowBright(email.to)}>`)}\n` +
+            `${chalk.bold.cyan(`To: ${chalk.yellowBright(email.to)}`)}\n\n` +
             marked.parse(email.body);
 
         const lines = content.split('\n').length;
@@ -154,9 +154,9 @@ class EmailPreviewer {
 
 
 
-const draftEmail = async (template: string, contacts: string, model: string, options?: any) => {
+const draftEmail = async (template: string, contacts: string, model: string, options?: { limit?: number }) => {
 
-    const formatted = gptPrompt.replace(/!TEMPLATE!/g, template).replace(/!CONTACTS!/g, contacts).replace(/!OPTIONS!/g, JSON.stringify(options));
+    const formatted = gptPrompt.replace(/!TEMPLATE!/g, template).replace(/!CONTACTS!/g, contacts).replace(/!LIMIT!/g, options?.limit?.toString() ?? 'None');
     const messages = [
         { role: "system", content: "You are an intelligent email drafting tool for performing mail merges. You are given a list of contacts and an email template. You are asked to generate a list of emails." },
         { role: "user", content: formatted },
@@ -203,8 +203,8 @@ const gptPrompt = `
     # CONTACTS
     !CONTACTS!
 
-    # OTHER OPTIONS
-    !OPTIONS!
+    # LIMIT
+    !LIMIT!
 `
 
 type Email = {
