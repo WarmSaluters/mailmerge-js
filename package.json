@@ -17,8 +17,6 @@
     "chalk": "^4.1.2",
     "cli-spinners": "^3.0.0",
     "commander": "^8.3.0",
-    "ink": "^4.4.1",
-    "ink-tab": "^5.0.0",
     "marked": "^12.0.2",
     "marked-terminal": "^7.0.0",
     "openai": "^4.47.1",
@@ -31,7 +29,7 @@
     "@babel/preset-env": "^7.15.6",
     "@babel/preset-typescript": "^7.15.0",
     "@types/marked-terminal": "^6.1.1",
-    "@types/node": "^16.18.97",
+    "@types/node": "^20.12.12",
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"
   }

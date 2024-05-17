@@ -9,11 +9,16 @@ export default function ConfigureHelp(program: Command) {
                 return `\t${chalk.blue(term.padEnd(termWidth))}\t${chalk.green(description)}`;
             };
 
-
             const helpTextParts : string[] = [];
 
+            if (cmd.parent === null) {
+                const titleText = `⚡ mailmerge-js`;
+                const title = chalk.bold.magentaBright(`\n${titleText}\n`);
+                helpTextParts.push(title);
+            }
+
             const usage = helper.commandUsage(cmd);
-            if (usage) {
+            if (cmd.parent && usage) {
                 helpTextParts.push(`${chalk.bold('Usage:')}\n\n  ${usage}\n\n`);
             }
 
@@ -37,7 +42,7 @@ export default function ConfigureHelp(program: Command) {
                 }).join('\n') + '\n\n');
             }
 
-            return chalk.black(helpTextParts.join('\n'));
+            return helpTextParts.join('\n');
         }
     });
 };
