@@ -6,7 +6,6 @@ const { OAuth2Client } = require('google-auth-library');
 
 const app = express();
 const PORT = process.env.PORT || 0;
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
 const oAuth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
@@ -17,7 +16,7 @@ const oAuth2Client = new google.auth.OAuth2(
 app.get('/auth', (req, res) => {
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: 'offline',
-        scope: SCOPES,
+        scope: req.query.scopes.split(','),
     });
     res.json({ authUrl });
 });

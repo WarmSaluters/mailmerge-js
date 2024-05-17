@@ -4,25 +4,25 @@ import readline from 'readline';
 import fs from 'fs';
 import path from 'path';
 import { google } from 'googleapis';
+import Config, { updateConfigFile } from './config.js';
 
-const SERVER_URL = 'http://localhost:0'; // Replace with your server URL
+// Replace with mailmerge-js hosted server
+const SERVER_URL = 'http://localhost:3000';
 
-// TODO: THIS IS TEMP
-const TOKEN_PATH = 'token.json';
-const CREDENTIALS_PATH = 'credentials.json';
+const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
 // Return an authorized client
 export async function initateAuth() {
-    if (!fs.existsSync(TOKEN_PATH)) {
+    if (!Config.gmailToken) {
         console.log('No token found, initiating authentication...');
-        if (fs.existsSync(CREDENTIALS_PATH)) {
+        if (!Config.googleCredentialsJSON) {
             await initiateAuthWithUserCredentials();
         } else {
             await initiateAuthWithMailmergeServer();
         }
     }
 
-    const token = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf8'));
+    const token = JSON.parse(Config.gmailToken!);
     const oAuth2Client = new google.auth.OAuth2();
     oAuth2Client.setCredentials(token);
 
@@ -33,13 +33,13 @@ export async function initateAuth() {
 // Function to initiateAuth with user-provided credentials
 async function initiateAuthWithUserCredentials() {
     try {
-        const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
+        const credentials = JSON.parse(Config.googleCredentialsJSON!);
         const { client_id, client_secret, redirect_uris } = credentials.installed;
         const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
-            scope: ['https://www.googleapis.com/auth/gmail.readonly'],
+            scope: SCOPES,
         });
         console.log('Opening browser for authentication...');
         await open(authUrl);
@@ -48,14 +48,16 @@ async function initiateAuthWithUserCredentials() {
             output: process.stdout
         });
         const code : string= await new Promise((resolve) => {
-            rl.question('Enter the code from the page here: ', (answer) => {
+            rl.question('Finish the prompts and copy and paste the final url here: ', (answer) => {
                 rl.close();
-                resolve(answer);
+                const code = answer.split('code=')[1];
+                resolve(code);
             });
         });
         const tokenResponse = await oAuth2Client.getToken(code);
         oAuth2Client.setCredentials(tokenResponse.tokens);
-        fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokenResponse.tokens));
+        Config.gmailToken = JSON.stringify(tokenResponse.tokens);
+        updateConfigFile(Config);
         console.log('Token stored:', tokenResponse.tokens);
     } catch (error) {
         console.error('Error during authentication with user credentials:', error);
@@ -65,7 +67,7 @@ async function initiateAuthWithUserCredentials() {
 // Function to initiateAuth with mailmerge-js server
 async function initiateAuthWithMailmergeServer() {
     try {
-        const response = await axios.get(`${SERVER_URL}/auth`);
+        const response = await axios.get(`${SERVER_URL}/auth?scopes=${SCOPES.join(',')}`);
         const authUrl = response.data.authUrl;
         console.log('Opening browser for authentication...');
         await open(authUrl);
@@ -81,7 +83,8 @@ async function initiateAuthWithMailmergeServer() {
         });
         const tokenResponse = await axios.get(`${SERVER_URL}/oauth2callback?code=${code}`);
         const token = tokenResponse.data;
-        fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
+        Config.gmailToken = JSON.stringify(token);
+        updateConfigFile(Config);
         console.log('Token stored:', token);
     } catch (error) {
         console.error('Error during authentication with mailmerge-js server:', error);
