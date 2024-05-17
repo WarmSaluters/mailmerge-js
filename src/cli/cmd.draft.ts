@@ -6,7 +6,6 @@ import ora from 'ora';
 import chalk from "chalk";
 import fs from 'fs';
 import { continueOrSkip, question } from "./prompt";
-import readline from 'node:readline';
 
 export default function DraftCommand(program: Command) {
     //@ts-ignore
@@ -14,11 +13,11 @@ export default function DraftCommand(program: Command) {
 
     program
         .command('draft')
-        .description('Draft emails')
-        .option('--model <model>', 'ai model to use for drafting', 'gpt-4o')
-        .option('--limit <limit>', 'number of emails to draft')
-        .requiredOption("--contacts <contacts>", 'contacts to use for mail merge')
+        .description('Draft emails using AI.')
         .argument('template', 'email template to use for mail merge')
+        .requiredOption("-c, --contacts <contacts>", 'contacts to use for mail merge')
+        .option('-m, --model <model>', 'ai model to use for drafting', 'gpt-4o')
+        .option('-l, --limit <limit>', 'number of emails to draft')
         .action(async (template, options) => {
             const spinner = ora('⚡ Drafting emails...').start();
 

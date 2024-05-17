@@ -19,25 +19,25 @@ export default function ConfigureHelp(program: Command) {
 
             const usage = helper.commandUsage(cmd);
             if (cmd.parent && usage) {
-                helpTextParts.push(`${chalk.bold('Usage:')}\n\n  ${usage}\n\n`);
+                helpTextParts.push(`${chalk.bold('Usage:')}\n  ${usage}\n`);
             }
 
             const description = helper.commandDescription(cmd);
             if (description) {
-                helpTextParts.push(`${chalk.bold('Description:')}\n\n  ${description}\n\n`);
+                helpTextParts.push(`${chalk.bold('Description:')}\n  ${description}\n`);
             }
 
             const commands = helper.visibleCommands(cmd);
             if (commands.length > 0) {
-                helpTextParts.push(`${chalk.bold('Commands:')}\n\n` + commands.map(subCmd => {
+                helpTextParts.push(`${chalk.bold('Commands:')}\n` + commands.map(subCmd => {
                     return formatItem(subCmd.name(), subCmd.description());
-                }).join('\n') + '\n\n');
+                }).join('\n') + '\n');
             }
 
 
             const options = helper.visibleOptions(cmd);
             if (options.length > 0) {
-                helpTextParts.push(`${chalk.bold('Options:')}\n\n` + options.map(option => {
+                helpTextParts.push(`${chalk.bold('Options:')}\n` + options.map(option => {
                     return formatItem(helper.optionTerm(option), helper.optionDescription(option));
                 }).join('\n') + '\n\n');
             }
