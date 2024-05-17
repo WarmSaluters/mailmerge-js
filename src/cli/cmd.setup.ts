@@ -3,6 +3,7 @@ import { Config, updateConfigFile } from '../lib/config';
 import { question, continueOrSkip } from "./prompt";
 import chalk from "chalk";
 import { exit } from "process";
+import { initateAuth, listLabels } from "../lib/gmail";
 
 export default function SetupCommand(program: Command) {
     const root = program.command('setup')
@@ -30,6 +31,7 @@ export default function SetupCommand(program: Command) {
             if (configureGmail) {
                 // TODO: Do log in.
                 console.log("Coming soon...")
+                await listLabels();
             }
         });
 

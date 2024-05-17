@@ -4,6 +4,7 @@ import path from 'path';
 type IConfig = {
     openaiAPIKey?: string;
     gmailToken?: string;
+    googleCredentialsJSON?: string;
 }
 
 const DEFAULT_CONFIG_FILE = '~/.mailmerge/config.json'.replace('~', process.env.HOME ?? '');
