@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import ConfigureHelp from './help';
-import SendCommand from './cmd.send';
-import DraftCommand from './cmd.draft';
-import SetupCommand from './cmd.setup';
+import ConfigureHelp from './help.js';
+import SendCommand from './cmd.send.js';
+import DraftCommand from './cmd.draft.js';
+import SetupCommand from './cmd.setup.js';
 
 const program = new Command();
 

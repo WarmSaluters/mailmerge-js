@@ -1,9 +1,9 @@
 import { Argument, Command, Option } from "commander";
-import { Config, updateConfigFile } from '../lib/config';
-import { question, continueOrSkip } from "./prompt";
+import { Config, updateConfigFile } from '../lib/config.js';
+import { question, continueOrSkip } from "./prompt.js";
 import chalk from "chalk";
 import { exit } from "process";
-import { initateAuth, listLabels } from "../lib/gmail";
+import { initateAuth, listLabels } from "../lib/gmail.js";
 
 export default function SetupCommand(program: Command) {
     const root = program.command('setup')

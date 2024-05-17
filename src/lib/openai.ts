@@ -1,5 +1,5 @@
 import { OpenAI } from "openai";
-import Config from "./config";
+import Config from "./config.js";
 
 export const requestLLM = async (messages: { role: string, content: string }[], options?: {model: string}) => {
     const openai = new OpenAI({

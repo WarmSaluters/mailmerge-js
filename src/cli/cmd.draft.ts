@@ -1,11 +1,11 @@
 import { Command } from "commander";
 import { marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
-import { requestLLM } from "../lib/openai";
+import { requestLLM } from "../lib/openai.js";
 import ora from 'ora';
 import chalk from "chalk";
 import fs from 'fs';
-import { continueOrSkip, question } from "./prompt";
+import { continueOrSkip, question } from "./prompt.js";
 
 export default function DraftCommand(program: Command) {
     //@ts-ignore

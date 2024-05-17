@@ -6,8 +6,10 @@ import path from 'path';
 import { google } from 'googleapis';
 
 const SERVER_URL = 'http://localhost:0'; // Replace with your server URL
-const TOKEN_PATH = path.join(__dirname, 'token.json');
-const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
+
+// TODO: THIS IS TEMP
+const TOKEN_PATH = 'token.json';
+const CREDENTIALS_PATH = 'credentials.json';
 
 // Return an authorized client
 export async function initateAuth() {
@@ -40,7 +42,6 @@ async function initiateAuthWithUserCredentials() {
             scope: ['https://www.googleapis.com/auth/gmail.readonly'],
         });
         console.log('Opening browser for authentication...');
-        await open(authUrl);
         await open(authUrl);
         const rl = readline.createInterface({
             input: process.stdin,
