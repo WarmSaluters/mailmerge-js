@@ -19,6 +19,9 @@ export default function SetupCommand(program: Command) {
                         console.log(chalk.red("No API key provided. Please try again."));
                         exit(1);
                     }
+                    Config.openaiAPIKey = input;
+                    updateConfigFile(Config);
+                    console.log(chalk.green("OpenAI API key set up successfully."));
                 })
                 .prompt();
             }
