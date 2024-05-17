@@ -1,21 +1,19 @@
 import axios from 'axios';
 import open from 'open';
 import readline from 'readline';
-import fs from 'fs';
-import path from 'path';
-import { google } from 'googleapis';
+import { google, Auth } from 'googleapis';
 import Config, { updateConfigFile } from './config.js';
 
 // Replace with mailmerge-js hosted server
 const SERVER_URL = 'http://localhost:3000';
 
-const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose'];
 
 // Return an authorized client
-export async function initateAuth() {
+export async function initateAuth() : Promise<Auth.OAuth2Client> {
     if (!Config.gmailToken) {
         console.log('No token found, initiating authentication...');
-        if (!Config.googleCredentialsJSON) {
+        if (Config.googleCredentialsJSON) {
             await initiateAuthWithUserCredentials();
         } else {
             await initiateAuthWithMailmergeServer();
@@ -26,6 +24,10 @@ export async function initateAuth() {
     const oAuth2Client = new google.auth.OAuth2();
     oAuth2Client.setCredentials(token);
 
+    // Set mailbox on Config
+    const mailbox = await getCurrentMailbox(oAuth2Client);
+    Config.currentMailbox = mailbox ?? undefined;
+
     return oAuth2Client;
 }
 
@@ -33,7 +35,7 @@ export async function initateAuth() {
 // Function to initiateAuth with user-provided credentials
 async function initiateAuthWithUserCredentials() {
     try {
-        const credentials = JSON.parse(Config.googleCredentialsJSON!);
+        const credentials = JSON.parse(Config.googleCredentialsJSON ?? 'null');
         const { client_id, client_secret, redirect_uris } = credentials.installed;
         const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
@@ -91,9 +93,16 @@ async function initiateAuthWithMailmergeServer() {
     }
 }
 
-export async function listLabels() {
-    const oAuth2Client = await initateAuth();
-    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
+
+// Functions
+export async function getCurrentMailbox (auth: Auth.OAuth2Client) {
+    const gmail = google.gmail({ version: 'v1', auth: auth });
+    const res = await gmail.users.getProfile({ userId: 'me' });
+    return res.data.emailAddress
+}
+
+export async function listLabels(auth: Auth.OAuth2Client) {
+    const gmail = google.gmail({ version: 'v1', auth: auth });
     const res = await gmail.users.labels.list({ userId: 'me' });
     const labels = res.data.labels;
     if (labels && labels.length) {

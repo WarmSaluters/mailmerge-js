@@ -5,6 +5,7 @@ type IConfig = {
     openaiAPIKey?: string;
     gmailToken?: string;
     googleCredentialsJSON?: string;
+    currentMailbox?: string;
 }
 
 const DEFAULT_CONFIG_FILE = '~/.mailmerge/config.json'.replace('~', process.env.HOME ?? '');
@@ -13,8 +14,6 @@ export const updateConfigFile = (config: IConfig, file: string=DEFAULT_CONFIG_FI
     // Create if not exist
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, JSON.stringify(config));
-    Config.gmailToken = config.gmailToken;
-    Config.openaiAPIKey = config.openaiAPIKey;
 }
 
 export const readConfigFile = (file: string=DEFAULT_CONFIG_FILE) => {

@@ -27,11 +27,17 @@ export default function SetupCommand(program: Command) {
                 .prompt();
             }
 
-            const configureGmail = await continueOrSkip("Set up Gmail?").prompt();
+            const displayGmail = chalk.blue("\n[Current Mailbox]: ", Config.currentMailbox ?? chalk.red('<NOT SET>'));
+            const configureGmail = await continueOrSkip("Set up Gmail? " + displayGmail + " ", { default: Config.gmailToken ? 'n' : 'y' }).prompt();
             if (configureGmail) {
+
+                // Give a list of options:
+                 // - use provided creds
+                 // - use own gmail creds (provide a link)
                 // TODO: Do log in.
                 console.log("Coming soon...")
-                await listLabels();
+                const auth = await initateAuth();
+                await listLabels(auth);
             }
         });
 
