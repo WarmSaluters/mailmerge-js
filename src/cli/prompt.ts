@@ -3,7 +3,7 @@ import { stdin, stdout } from 'node:process';
 import chalk from 'chalk';
 
 export class InputPrompt {
-    private callback: ((input: string) => any) | null = null;
+    private callback: ((input: string) => any) | null = (input) => input;
 
     constructor(private readonly promptString: string) {
         this.promptString = promptString;

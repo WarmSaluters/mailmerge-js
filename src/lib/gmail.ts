@@ -27,7 +27,7 @@ export async function initateAuth() : Promise<Auth.OAuth2Client> {
     // Set mailbox on Config
     const mailbox = await getCurrentMailbox(oAuth2Client);
     Config.currentMailbox = mailbox ?? undefined;
-
+    updateConfigFile(Config);
     return oAuth2Client;
 }
 
@@ -98,6 +98,7 @@ async function initiateAuthWithMailmergeServer() {
 export async function getCurrentMailbox (auth: Auth.OAuth2Client) {
     const gmail = google.gmail({ version: 'v1', auth: auth });
     const res = await gmail.users.getProfile({ userId: 'me' });
+    console.log(res.data.emailAddress);
     return res.data.emailAddress
 }
 

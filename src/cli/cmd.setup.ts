@@ -4,6 +4,7 @@ import { question, continueOrSkip } from "./prompt.js";
 import chalk from "chalk";
 import { exit } from "process";
 import { initateAuth, listLabels } from "../lib/gmail.js";
+import fs from 'fs';
 
 export default function SetupCommand(program: Command) {
     const root = program.command('setup')
@@ -35,7 +36,20 @@ export default function SetupCommand(program: Command) {
                  // - use provided creds
                  // - use own gmail creds (provide a link)
                 // TODO: Do log in.
-                console.log("Coming soon...")
+                // console.log("Coming soon...")
+
+                // Ask for path to credentials.json. Load the file and add to Config
+                const credentialsPath = await question("> Enter the path to your credentials.json: ").prompt();
+                if (!fs.existsSync(credentialsPath)) {
+                    console.log(chalk.red("The provided path does not exist. Please try again."));
+                    exit(1);
+                }
+                
+                const credentials = fs.readFileSync(credentialsPath, 'utf8');
+                Config.googleCredentialsJSON = credentials;
+                updateConfigFile(Config);
+                console.log(chalk.green("Gmail credentials set up successfully."));
+
                 const auth = await initateAuth();
                 await listLabels(auth);
             }
