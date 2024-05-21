@@ -35,7 +35,7 @@ export async function createDraft(
       },
     },
   });
-  console.log("Draft Id: ", draft.data.id);
+
   return draft.data.id;
 }
 
@@ -55,14 +55,13 @@ export async function sendEmail(
       id: draftId,
     },
   });
-  console.log("Mail sent with Id: ", send.data.id);
   return send.data.id;
 }
 
 function makeBody(to: string, from: string, subject: string, message: string) {
   // Build the full email content with proper line endings
   const fullEmail = [
-    'Content-Type: text/plain; charset="UTF-8"\r\n',
+    'Content-Type: text/html; charset="UTF-8"\r\n',
     "MIME-Version: 1.0\r\n",
     "Content-Transfer-Encoding: 7bit\r\n",
     "To: ",
@@ -76,8 +75,6 @@ function makeBody(to: string, from: string, subject: string, message: string) {
     "\r\n\r\n",
     message,
   ].join("");
-
-  console.log(fullEmail);
 
   // Base64 encode the entire email content
   const encodedEmail = Buffer.from(fullEmail)
