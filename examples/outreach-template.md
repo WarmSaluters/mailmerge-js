@@ -1,19 +1,15 @@
 # Subject
-
-<< insert an appropriate title of your choosing >>
+{{ "Insert some subject related to connecting via their company or title, whichever more appropriate" }}
 
 # Body
+Hi {{ first name}},
 
-Hi {{ first name }},
+I hope this message finds you well. I'm Bob from MailMerge-JS, a startup that's building a tool to automate email outreach. 
+I came across your profile and was impressed by your track record in {{ industry in company }} and wanted to show 
+you how our tool can help you automate {{ insert reason to use the outreach tool based on their title }}
 
-I found your email from the {{ company }} website and I thought it would be interesting to reach out to you regarding your role as {{ your position }}. I'm a startup founder looking to build software in higher ed and I was wondering if you'd be able to help me answer a few questions:
+Would you be open to a quick chat next week?
 
-<< bullet point out 2 pertinent questions >>
-
-Would you be able to jump on a call sometime next week?
-
-Thanks,
-
-Charles
-
-[LinkedIn](https://linkedin.com/in/charlesyu108)
+Best,
+Bob @ MailMerge-JS
+[https://mailmerge-js.dev](https://mailmerge-js.dev)

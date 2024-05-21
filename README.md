@@ -1,27 +1,67 @@
 # MailMerge-JS ⚡
 
-MailMerge-JS is a powerful JavaScript library for creating and sending personalized emails effortlessly.
+MailMerge-JS is a next-generation Gmail automation tool supercharged by AI. Effortlessly draft and send highly personalized templated emails without worrying about email templating and data massaging, all from your Gmail inbox.
+
+## How it Works
+
+MailMerge-JS leverages the power of OpenAI and the Gmail API to streamline the email drafting process. Write your templates in any format you prefer (HTML/Markdown/Text/Jinja) and loosely express variables and directives in pseudocode using double curly braces `{{ }}`. The AI will then generate the actual email content for you, synthesized against any data file format you provide.
 
 ## Features
-- **Easy Integration**
-- **Template Engine Support**
-- **Bulk Sending**
-- **Customizable**
+
+- **Bring Your Own Keys and Credentials**: Maintain control over your API keys and credentials.
+- **Scale**: Draft and send emails at scale, perfect for large outreach campaigns.
+- **Flexibility**: Understands loose or missing data requirements, making it adaptable to various data sources.
+- **Free and Open-Source**: Completely free to use and modify.
+- **OpenAI Integration**: Enhances the email drafting process with AI-powered content generation.
 
 ## Installation
-```
-npm i -g mailmerge-js
+
+To install MailMerge-JS, use the following commands:
+
+```bash
+npm install -g mailmerge-js
 mailmerge setup
 ```
 
-## Usage
+## Quickstart
+
+### Draft personalized emails 
 ```
-# Draft personalized templated emails
-mailmerge draft --contacts ./contacts.csv ./customer-outreach-template.md
+mailmerge draft --contacts ./examples/sample-contacts.csv ./examples/outreach-template.md
+```
+
+#### Template: `examples/outreach-template.md`
+```markdown
+
+# Subject
+{{ "Insert some subject related to connecting via their company or title, whichever more appropriate" }}
+
+# Body
+Hi {{first name}},
+
+I hope this message finds you well. I'm Bob from MailMerge-JS, a startup that's building a tool to automate email outreach. 
+I came across your profile and was impressed by your track record in {{ industry in company }} and wanted to show 
+you how our tool can help you automate {{ insert reason to use the outreach tool based on their title }}
+
+Would you be open to a quick chat next week?
+
+Best,
+Bob @ MailMerge-JS
+[https://mailmerge-js.dev](https://mailmerge-js.dev)
+
+
+```
+
+#### Contact Data: `examples/sample-contacts.csv`
+```csv
+name,email,company,position
+John Doe,john.doe@example.com,Crunch Fitness,Fitness Instructor
+Jane Smith,jane.smith@example.com,Coca-Cola,CTO
+Alice Johnson,alice.johnson@example.com,Microsoft,Product Manager
+Bob Brown,bob.brown@example.com,Bank of America,Marketing Director
 ```
 
 ## Contributing
-
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## License
