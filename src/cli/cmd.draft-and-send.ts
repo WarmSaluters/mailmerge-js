@@ -1,6 +1,5 @@
 import chalk from "chalk";
 import { Command } from "commander";
-import fs from "fs";
 import { marked } from "marked";
 import { markedTerminal } from "marked-terminal";
 import ora from "ora";
@@ -8,7 +7,10 @@ import readline from "readline";
 import showdown from "showdown";
 import { createDraft, sendEmail } from "../lib/gmail.js";
 import { initateAuth } from "../lib/google-auth.js";
-import { requestLLM } from "../lib/openai.js";
+import { mailMergeAIBulk } from "../lib/mail-merge.js";
+import { getMockEmails } from "../lib/mocks.js";
+import { Email } from "../lib/types.js";
+import { getFileContents } from "../lib/utils.js";
 import { continueOrSkip } from "./prompt.js";
 
 export default function DraftAndSendCommand(program: Command) {
@@ -61,7 +63,7 @@ export default function DraftAndSendCommand(program: Command) {
       const createAsGmailDrafts = await continueOrSkip(
         "Create as drafts only? You will need to go into Gmail and send them."
       ).prompt();
-      const converter = new showdown.Converter();
+      const converter = new showdown.Converter({ simpleLineBreaks: true });
 
       if (createAsGmailDrafts) {
         for (const email of emails) {
@@ -98,19 +100,20 @@ const getEmailsFromLLM = async (
 
   const templateContents = await getFileContents(template);
   const contactsContents = await getFileContents(contacts);
-  const response = await draftEmail(templateContents, contactsContents, model, {
-    limit,
-  });
+  const response = await mailMergeAIBulk(
+    templateContents,
+    contactsContents,
+    model,
+    {
+      limit,
+    }
+  );
 
   const responseJSON = JSON.parse(response ?? "{}");
   return {
     emails: responseJSON.emails ?? [],
     warnings: responseJSON.warnings ?? [],
   };
-};
-
-const getFileContents = async (file: string) => {
-  return fs.readFileSync(file, "utf8");
 };
 
 class EmailPreviewer {
@@ -216,97 +219,3 @@ class EmailPreviewer {
     process.stdout.cursorTo(0);
   };
 }
-
-const draftEmail = async (
-  template: string,
-  contacts: string,
-  model: string,
-  options?: { limit?: number }
-) => {
-  const formatted = gptPrompt
-    .replace(/!TEMPLATE!/g, template)
-    .replace(/!CONTACTS!/g, contacts)
-    .replace(/!LIMIT!/g, options?.limit?.toString() ?? "None");
-  const messages = [
-    {
-      role: "system",
-      content:
-        "You are an intelligent email drafting tool for performing mail merges. You are given a list of contacts and an email template. You are asked to generate a list of emails.",
-    },
-    { role: "user", content: formatted },
-  ];
-
-  const response = await requestLLM(messages, { model });
-  return response;
-};
-
-const gptPrompt = `
-    You are an intelligent email drafting tool for performing mail merges. You are given a list of contacts and an email template. You are asked to generate a list of emails.
-
-    The contacts list may include fields like name, email, phone, etc. 
-
-    The email template may include placeholders for the contact's name, email, phone, etc. 
-    Placeholders in the email template are indicated by {{ }} delimters.
-
-    The email template may also include user-specified directives for the AI to follow.
-    Directives are indicated by << >> delimters.
-
-    NOTE: The mail template variables may not match the contact fields exactly and you may need to perform some data mapping. Additionally if there are gaps that cannot be filled
-    by the contact data you may need to tweak the message to accommodate for missing data. You should also smooth out any discrepancies in grammar introduced by plugging the fields in.
-
-    IMPORTANT: Unless explicitly given direction to do so or only for fixing grammar, DO NOT change the user's content or you will be penalized.
-
-    Return your answer in the following JSON format (the body should be formatted as markdown regardless of the template).
-    {
-        "emails": [
-            {
-                "to": "email@example.com",
-                "subject": "Hello, {{ contact.name }}",
-                "body": "Hello, {{ contact.name }}. This is a test email."
-            }
-        ],
-        "warnings": <Any warnings or errors to surface to user as a list>
-    }
-
-
-    # TEMPLATE
-    !TEMPLATE!
-
-
-    # CONTACTS
-    !CONTACTS!
-
-    # LIMIT
-    !LIMIT!
-`;
-
-type Email = {
-  to: string;
-  subject: string;
-  body: string;
-};
-
-const mockResponse = `{
-    "emails": [
-        {
-            "to": "tim.ray@chemeketa.edu",
-            "subject": "Inquiry Regarding Your Role at Chemeketa Community College",
-            "body": "Hi Tim,\\n\\nI found your email from the Chemeketa Community College website and I thought it would be interesting to reach out to you regarding your role as Dean of Agriculture Science and Technology. I'm a startup founder looking to build software in higher ed and I was wondering if you'd be able to help me answer a few questions:\\n\\n- What are the biggest challenges you face in your current position?\\n- How is technology currently utilized in your department?\\n\\nWould you be able to jump on a call sometime next week?\\n\\nThanks,\\nCharles\\n[https://linkedin.com/in/charlesyu108](https://linkedin.com/in/charlesyu108)"
-        },
-        {
-            "to": "schills@linnbenton.edu",
-            "subject": "Inquiry Regarding Your Role at Linn-Benton Community College",
-            "body": "Hi Steve,\\n\\nI found your email from the Linn-Benton Community College website and I thought it would be interesting to reach out to you regarding your role as Dean: Advanced Manufacturing & Transportation Technology. I'm a startup founder looking to build software in higher ed and I was wondering if you'd be able to help me answer a few questions:\\n\\n- What are the current goals for your department?\\n- What software solutions are currently in use and how effective are they?\\n\\nWould you be able to jump on a call sometime next week?\\n\\nThanks,\\nCharles\\n[https://linkedin.com/in/charlesyu108](https://linkedin.com/in/charlesyu108)"
-        }
-    ],
-    "warnings": ["This is a mock response"]
-}
-`;
-
-const getMockEmails = (): { emails: Email[]; warnings: string[] } => {
-  const responseJSON = JSON.parse(mockResponse);
-  return {
-    emails: responseJSON.emails ?? [],
-    warnings: responseJSON.warnings ?? [],
-  };
-};

@@ -13,6 +13,7 @@ I found your email from the {{ company }} website and I thought it would be inte
 Would you be able to jump on a call sometime next week?
 
 Thanks,
+
 Charles
 
-[https://linkedin.com/in/charlesyu108](https://linkedin.com/in/charlesyu108)
+[LinkedIn](https://linkedin.com/in/charlesyu108)
