@@ -5,6 +5,7 @@ import { marked } from "marked";
 import { markedTerminal } from "marked-terminal";
 import ora from "ora";
 import readline from "readline";
+import showdown from "showdown";
 import { createDraft, sendEmail } from "../lib/gmail.js";
 import { initateAuth } from "../lib/google-auth.js";
 import { requestLLM } from "../lib/openai.js";
@@ -60,13 +61,15 @@ export default function DraftAndSendCommand(program: Command) {
       const createAsGmailDrafts = await continueOrSkip(
         "Create as drafts only? You will need to go into Gmail and send them."
       ).prompt();
+      const converter = new showdown.Converter();
+
       if (createAsGmailDrafts) {
         for (const email of emails) {
           await createDraft(
             auth,
             email.to,
             email.subject,
-            await marked.parse(email.body)
+            converter.makeHtml(email.body)
           );
         }
         console.log(
@@ -78,7 +81,7 @@ export default function DraftAndSendCommand(program: Command) {
             auth,
             email.to,
             email.subject,
-            await marked.parse(email.body)
+            converter.makeHtml(email.body)
           );
         }
         console.log(chalk.green(`✅ Sent ${emails.length} emails.`));
