@@ -1,5 +1,6 @@
 import { Command } from "commander";
-import { initateAuth, sendEmail } from "../lib/gmail.js";
+import { sendEmail } from "../lib/gmail.js";
+import { initateAuth } from "../lib/google-auth.js";
 
 export default function SendCommand(program: Command) {
   program

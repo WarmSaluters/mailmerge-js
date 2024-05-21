@@ -1,0 +1,13 @@
+{
+    "name": "auth-server",
+    "version": "1.0.0",
+    "description": "A simple authentication server using Google OAuth2",
+    "main": "server.cjs",
+    "scripts": {
+      "start": "node server.cjs"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "googleapis": "^39.2.0"
+    }
+  }

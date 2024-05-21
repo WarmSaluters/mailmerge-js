@@ -10,6 +10,10 @@ type IConfig = {
 
 const DEFAULT_CONFIG_FILE = '~/.mailmerge/config.json'.replace('~', process.env.HOME ?? '');
 
+export const deleteConfigFile = () => {
+    fs.unlinkSync(DEFAULT_CONFIG_FILE);
+}
+
 export const updateConfigFile = (config: IConfig, file: string=DEFAULT_CONFIG_FILE) => {
     // Create if not exist
     fs.mkdirSync(path.dirname(file), { recursive: true });
