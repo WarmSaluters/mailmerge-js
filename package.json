@@ -1,6 +1,6 @@
 {
   "name": "mailmerge-js",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A CLI tool for mail merging",
   "exports": "./dist/index.js",
   "bin": {
