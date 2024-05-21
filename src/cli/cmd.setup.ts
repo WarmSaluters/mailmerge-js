@@ -14,9 +14,9 @@ export default function SetupCommand(program: Command) {
             await setupOpenAI();
             await setupGmail();
         });
-    root.addCommand(program.command('openai').description('Set up OpenAI API key.').action(setupOpenAI));
-    root.addCommand(program.command('gmail').description('Set up Gmail.').action(setupGmail));
-    root.addCommand(program.command('reset').description('Reset the setup.').action(resetSetup));
+    root.command('openai').description('Set up OpenAI API key.').action(setupOpenAI);
+    root.command('gmail').description('Set up Gmail.').action(setupGmail);
+    root.command('reset').description('Reset the setup.').action(resetSetup);
 }
 
 
