@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { sendEmail } from "../lib/gmail.js";
-import { initateAuth } from "../lib/google-auth.js";
+import { authorize } from "../lib/google-auth.js";
 
 export default function SendCommand(program: Command) {
   program
@@ -8,7 +8,7 @@ export default function SendCommand(program: Command) {
     .description("Send a message to a list of recipients")
     .action(async () => {
       console.log("Todo: Send a message to a list of recipients");
-      const auth = await initateAuth();
+      const auth = await authorize();
       const draftId = await sendEmail(
         auth,
         "ryanhuang519@gmail.com",

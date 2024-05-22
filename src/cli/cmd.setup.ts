@@ -4,7 +4,7 @@ import { question, continueOrSkip } from "./prompt.js";
 import chalk from "chalk";
 import { exit } from "process";
 import { getCurrentMailbox, listLabels } from "../lib/gmail.js";
-import { initateAuth, initiateAuthWithMailmergeServer, initiateAuthWithUserCredentials } from "../lib/google-auth.js";
+import { LocalAuthorizer, MailmergeServerAuthorizer, authorize } from "../lib/google-auth.js";
 import fs from 'fs';
 
 export default function SetupCommand(program: Command) {
@@ -19,7 +19,6 @@ export default function SetupCommand(program: Command) {
     root.command('reset').description('Reset the setup.').action(resetSetup);
 }
 
-
 const setupGmail = async () => {
     const displayGmail = chalk.blue("\n[Current Mailbox]: ", Config.currentMailbox ?? chalk.red('<NOT SET>'));
     const configureGmail = await continueOrSkip("Set up Gmail? " + displayGmail + " ", { default: Config.currentMailbox ? 'n' : 'y' }).prompt();
@@ -27,7 +26,7 @@ const setupGmail = async () => {
 
         const useAuthServer = await continueOrSkip("\nAuthorize with our mailmerge-js auth server?" + chalk.blue("\n(Alternatively, you can skip this and set up with your own google app credentials.)")).prompt();
         if (useAuthServer) {
-            await initiateAuthWithMailmergeServer();
+            await MailmergeServerAuthorizer.promptConsent();
         }
         else {
             // Ask for path to credentials.json. Load the file and add to Config
@@ -39,25 +38,16 @@ const setupGmail = async () => {
             const credentials = fs.readFileSync(credentialsPath, 'utf8');
             Config.googleCredentialsJSON = credentials;
             updateConfigFile(Config);
-            await initiateAuthWithUserCredentials();
+            await LocalAuthorizer.promptConsent();
         }
 
         console.log(chalk.green("Gmail credentials set up successfully."));
-        const auth = await initateAuth();
+        const auth = await authorize();
         const mailbox = await getCurrentMailbox(auth);
         Config.currentMailbox = mailbox ?? undefined;
         updateConfigFile(Config);
         console.log(chalk.green("Set mailbox to: ", Config.currentMailbox));
     }
-}
-
-
-const useOwnGmailCreds = async () => {
-    const link = await question("> Enter the link to your Gmail credentials: ").prompt();
-}
-
-const useProvidedCreds = async () => {
-    const path = await question("> Enter the path to your credentials.json: ").prompt();
 }
 
 const setupOpenAI = async () => {

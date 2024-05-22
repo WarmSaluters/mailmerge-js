@@ -30,6 +30,15 @@ app.get('/oauth2callback', async (req, res) => {
     }
 });
 
+app.get('/refresh', async (req, res) => {
+    const storedTokens = JSON.parse(req.query.token);
+    oAuth2Client.setCredentials(storedTokens);
+    oAuth2Client.forceRefreshOnFailure = true;
+    await oAuth2Client.getAccessToken();
+    const tokens = oAuth2Client.credentials;
+    res.json({tokens});
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

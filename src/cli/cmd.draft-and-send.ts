@@ -5,7 +5,7 @@ import { markedTerminal } from "marked-terminal";
 import ora from "ora";
 import showdown from "showdown";
 import { createDraft, sendEmail } from "../lib/gmail.js";
-import { initateAuth } from "../lib/google-auth.js";
+import { authorize } from "../lib/google-auth.js";
 import { mailMergeAIBulk } from "../lib/mail-merge.js";
 import { getMockEmails } from "../lib/mocks.js";
 import { Email } from "../lib/types.js";
@@ -59,7 +59,7 @@ export default function DraftAndSendCommand(program: Command) {
         return;
       }
 
-      const auth = await initateAuth();
+      const auth = await authorize();
       const createAsGmailDrafts = await continueOrSkip(
         "Create as drafts only? You will need to go into Gmail and send them."
       ).prompt();

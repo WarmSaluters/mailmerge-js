@@ -36,12 +36,20 @@ export const readConfigFile = (file: string = DEFAULT_CONFIG_FILE) => {
 
 export const loadConfig = () => {
   const config = readConfigFile();
-  return {
+
+  const loaded = {
     openaiAPIKey: config.openaiAPIKey,
     gmailToken: config.gmailToken,
     googleCredentialsJSON: config.googleCredentialsJSON,
     currentMailbox: config.currentMailbox,
   } as IConfig;
+
+  // Repair broken token
+  if (loaded.gmailToken && !loaded.gmailToken.includes("refresh")) {
+    loaded.gmailToken = undefined
+  }
+
+  return loaded;
 };
 
 export const Config = loadConfig();
