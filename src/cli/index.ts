@@ -7,12 +7,13 @@ import SetupCommand from "./cmd.setup.js";
 import ConfigureHelp from "./help.js";
 import _DevCommand from "./cmd.dev.js";
 
-const program = new Command();
+import packageJSON from "../../package.json" assert { type: "json" };
 
+const program = new Command();
 program
-  .name("mailmerge")
-  .version("1.0.0")
-  .description("A simple CLI for mail merge.")
+  .name(packageJSON.name)
+  .version(packageJSON.version)
+  .description(packageJSON.description)
   .action(() => {
     program.help();
   })

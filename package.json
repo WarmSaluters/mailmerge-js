@@ -1,17 +1,18 @@
 {
   "name": "mailmerge-js",
   "version": "1.0.14",
-  "description": "A CLI tool for mail merging",
-  "exports": "./dist/index.js",
+  "description": "A powerful CLI for gmail automation, supercharged by AI ⚡",
+  "exports": "./dist/src/cli/index.js",
   "bin": {
-    "mailmerge": "./dist/cli/index.js"
+    "mailmerge": "./dist/src/cli/index.js"
   },
   "engines": {
     "node": ">=18"
   },
+  "postinstall": "echo '⚡ ZAP! Run mailmerge setup to get started. ⚡'",
   "scripts": {
-    "start": "npm run build && node ./dist/cli/index.js",
-    "release": "npm run build && npm version patch && npm publish && git push",
+    "start": "npm run build && node ./dist/src/cli/index.js",
+    "release": "npm run build && npm version patch && npm run build && npm publish && git push",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
