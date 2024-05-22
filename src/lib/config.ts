@@ -6,6 +6,7 @@ type IConfig = {
   gmailToken?: string;
   googleCredentialsJSON?: string;
   currentMailbox?: string;
+  latestKnownVersion?: string;
 };
 
 const DEFAULT_CONFIG_FILE = "~/.mailmerge/config.json".replace(
@@ -42,6 +43,7 @@ export const loadConfig = () => {
     gmailToken: config.gmailToken,
     googleCredentialsJSON: config.googleCredentialsJSON,
     currentMailbox: config.currentMailbox,
+    latestKnownVersion: config.latestKnownVersion,
   } as IConfig;
 
   // Repair broken token
