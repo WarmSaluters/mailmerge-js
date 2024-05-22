@@ -1,6 +1,5 @@
-import * as readline from 'node:readline';
-import { stdin, stdout } from 'node:process';
 import chalk from 'chalk';
+import inquirer from 'inquirer';
 
 export class InputPrompt {
     private callback: ((input: string) => any) | null = (input) => input;
@@ -14,17 +13,17 @@ export class InputPrompt {
         return this;
     }
 
-    prompt() {
-        console.log();
-        const rl = readline.createInterface({ input: stdin, output: stdout });
-        return new Promise<string>((resolve, reject) => {
-            rl.question(this.promptString, (answer) => {
-                rl.close();
-                if (this.callback) {
-                    resolve(this.callback(answer));
-                }
-            });
-        });
+    async prompt () {
+        const result = await inquirer.prompt([{
+            type: 'input',
+            name: 'result',
+            message: this.promptString,
+        }]);
+
+        if (this.callback) {
+            return this.callback(result.result);
+        }
+        return result.result;
     }
 }
 

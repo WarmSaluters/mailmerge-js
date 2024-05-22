@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
-import DraftAndSendCommand from "./cmd.draft-and-send.js";
-import DraftCommand from "./cmd.draft.js";
+import ComposeCommand from "./cmd.compose.js";
 import SendCommand from "./cmd.send.js";
 import SetupCommand from "./cmd.setup.js";
 import ConfigureHelp from "./help.js";
@@ -14,6 +13,7 @@ program
   .name(packageJSON.name)
   .version(packageJSON.version)
   .description(packageJSON.description)
+  .showHelpAfterError()
   .action(() => {
     program.help();
   })
@@ -24,8 +24,7 @@ program
 // ------------- Add things that mutate the program ----------
 ConfigureHelp(program);
 SendCommand(program);
-DraftCommand(program);
-DraftAndSendCommand(program);
+ComposeCommand(program);
 SetupCommand(program);
 _DevCommand(program);
 

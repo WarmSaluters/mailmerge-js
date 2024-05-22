@@ -27,6 +27,7 @@
     "express": "^4.19.2",
     "google-auth-library": "^9.10.0",
     "googleapis": "^137.1.0",
+    "inquirer": "^9.2.22",
     "marked": "^12.0.2",
     "marked-terminal": "^7.0.0",
     "open": "^10.1.0",
@@ -37,10 +38,12 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/inquirer": "^9.0.7",
     "@types/marked-terminal": "^6.1.1",
     "@types/node": "^20.12.12",
     "@types/semver": "^7.5.8",
     "@types/showdown": "^2.0.6",
+    "@types/uuid": "^9.0.8",
     "ts-node": "^10.9.2",
     "typescript": "^4.4.4"
   }

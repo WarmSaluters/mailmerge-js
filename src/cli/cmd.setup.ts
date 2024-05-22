@@ -24,7 +24,7 @@ const setupGmail = async () => {
     const configureGmail = await continueOrSkip("Set up Gmail? " + displayGmail + " ", { default: Config.currentMailbox ? 'n' : 'y' }).prompt();
     if (configureGmail) {
 
-        const useAuthServer = await continueOrSkip("\nAuthorize with our mailmerge-js auth server?" + chalk.blue("\n(Alternatively, you can skip this and set up with your own google app credentials.)")).prompt();
+        const useAuthServer = await continueOrSkip("Authorize with our mailmerge-js auth server?" + chalk.blue("\n(Alternatively, you can skip this and set up with your own google app credentials.)")).prompt();
         if (useAuthServer) {
             await MailmergeServerAuthorizer.promptConsent();
         }

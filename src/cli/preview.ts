@@ -76,7 +76,7 @@ export class EmailPreviewer {
     console.log(
       chalk.bold('Use "<-" to go back, "->" to go forward, "q" to exit.')
     );
-    this.linesWritten = lines + 4;
+    this.linesWritten = lines + 2;
   };
 
   renderEmailPreviewContent = (email: Email, index: number, total: number) => {
