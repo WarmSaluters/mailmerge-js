@@ -4,7 +4,7 @@
   "description": "A powerful CLI for gmail automation, supercharged by AI ⚡",
   "exports": "./dist/src/cli/index.js",
   "bin": {
-    "mailmerge": "NODE_NO_WARNINGS=1 ./dist/src/cli/index.js"
+    "mailmerge": "./dist/src/cli/index.js"
   },
   "engines": {
     "node": ">=18"
