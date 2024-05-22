@@ -1,6 +1,6 @@
 {
   "name": "mailmerge-js",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "A powerful CLI for gmail automation, supercharged by AI ⚡",
   "exports": "./dist/src/cli/index.js",
   "bin": {
