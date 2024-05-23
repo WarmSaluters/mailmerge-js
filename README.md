@@ -23,11 +23,26 @@ npm install -g mailmerge-js
 mailmerge setup
 ```
 
+### Setting up Google App Credentials
+This tool requires Google App credentials to draft and send emails. Here is how you can obtain those credentials:
+
+1. Go to the [Google Developer Console](https://console.developers.google.com/).
+2. Create a new project.
+3. Enable the Gmail API for that project.
+4. Add the following scopes to the project:
+   - `https://www.googleapis.com/auth/gmail.send`
+   - `https://www.googleapis.com/auth/gmail.compose`
+5. Create credentials for a desktop application.
+7. Download the JSON file
+
+**NOTICE (5/22/2024) - We used to provide a simple way to authorize via a hosted web server. This is no longer supported due to difficulties with getting Google App Approval. You will need to provide your own application credentials**
+
+
 ## Quickstart
 
 ### Draft personalized emails 
 ```
-mailmerge draft --contacts ./examples/sample-contacts.csv ./examples/outreach-template.md
+mailmerge compose --contacts ./examples/sample-contacts.csv ./examples/outreach-template.md
 ```
 
 #### Template: `examples/outreach-template.md`

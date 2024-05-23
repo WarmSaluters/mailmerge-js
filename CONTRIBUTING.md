@@ -8,7 +8,7 @@ We welcome contributions from everyone. To contribute, please follow these steps
 ```
 npm i
 
-npm run start -- draft --contacts ./examples/sample-contacts.csv ./examples/outreach-template.md
+npm run start -- compose --contacts ./examples/sample-contacts.csv ./examples/outreach-template.md
 ```
 
 2. **Open a Pull Request (PR)** with a clear description of your changes.

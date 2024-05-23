@@ -16,30 +16,30 @@ export default function SetupCommand(program: Command) {
         });
     root.command('openai').description('Set up OpenAI API key.').action(setupOpenAI);
     root.command('gmail').description('Set up Gmail.').action(setupGmail);
-    root.command('reset').description('Reset the setup.').action(resetSetup);
+    root.command('reset').description('Reset the setup.').action(resetSetup)
 }
 
 const setupGmail = async () => {
-    const displayGmail = chalk.blue("\n[Current Mailbox]: ", Config.currentMailbox ?? chalk.red('<NOT SET>'));
-    const configureGmail = await continueOrSkip("Set up Gmail? " + displayGmail + " ", { default: Config.currentMailbox ? 'n' : 'y' }).prompt();
-    if (configureGmail) {
 
-        const useAuthServer = await continueOrSkip("Authorize with our mailmerge-js auth server?" + chalk.blue("\n(Alternatively, you can skip this and set up with your own google app credentials.)")).prompt();
-        if (useAuthServer) {
-            await MailmergeServerAuthorizer.promptConsent();
+    const configureGmail = await continueOrSkip(
+        "Set up Gmail?\n"+ 
+        " You will need to create a google app if you have not done so already. \n" +
+        chalk.green(" Instructions: https://github.com/WarmSaluters/mailmerge-js/blob/main/README.md#setting-up-google-app-credentials \n") +
+        chalk.cyan("\n [Current Mailbox]: ", Config.currentMailbox ?? chalk.red('<NOT SET>')) + " ", 
+        { default: Config.currentMailbox ? 'n' : 'y' }
+    ).prompt();
+
+    if (configureGmail) {
+        // Ask for path to credentials.json. Load the file and add to Config
+        const credentialsPath = await question("> Enter the path to your credentials.json: ").prompt();
+        if (!fs.existsSync(credentialsPath)) {
+            console.log(chalk.red("The provided path does not exist. Please try again."));
+            exit(1);
         }
-        else {
-            // Ask for path to credentials.json. Load the file and add to Config
-            const credentialsPath = await question("> Enter the path to your credentials.json: ").prompt();
-            if (!fs.existsSync(credentialsPath)) {
-                console.log(chalk.red("The provided path does not exist. Please try again."));
-                exit(1);
-            }
-            const credentials = fs.readFileSync(credentialsPath, 'utf8');
-            Config.googleCredentialsJSON = credentials;
-            updateConfigFile(Config);
-            await LocalAuthorizer.promptConsent();
-        }
+        const credentials = fs.readFileSync(credentialsPath, 'utf8');
+        Config.googleCredentialsJSON = credentials;
+        updateConfigFile(Config);
+        await LocalAuthorizer.promptConsent();
 
         console.log(chalk.green("Gmail credentials set up successfully."));
         const auth = await authorize();

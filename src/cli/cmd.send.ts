@@ -5,6 +5,7 @@ import chalk from "chalk";
 import { EmailSerializer } from "./serializer.js";
 import { Email } from "../lib/types.js";
 import { continueOrSkip } from "./prompt.js";
+import Config from "../lib/config.js";
 
 export default function SendCommand(program: Command) {
   program
@@ -18,7 +19,7 @@ export default function SendCommand(program: Command) {
       if (options.confirm) {
         await sendEmails(emails);
       }
-      const shouldSend = await continueOrSkip(`Send ${emails.length} emails?`).prompt();
+      const shouldSend = await continueOrSkip(`Send ${emails.length} emails? ` + chalk.cyan(`\n [Current Mailbox]: ${Config.currentMailbox}`)).prompt();
       if (shouldSend) {
         await sendEmails(emails);
       }

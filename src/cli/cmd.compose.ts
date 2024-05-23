@@ -14,6 +14,7 @@ import { continueOrSkip } from "./prompt.js";
 import { EmailPreviewer } from "./preview.js";
 import inquirer from "inquirer";
 import { EmailSerializer } from "./serializer.js";
+import Config from "../lib/config.js";
 
 export default function DraftAndSendCommand(program: Command) {
   //@ts-ignore
@@ -21,7 +22,7 @@ export default function DraftAndSendCommand(program: Command) {
 
   program
     .command("compose")
-    .description(`Compose mail using AI and save to drafts or send via Gmail.\n  ${chalk.cyan.bold("NOTE: By default, this command only drafts emails. It will NOT send unless prompted.")}`)
+    .description(`Compose mail using AI and save to drafts or send via Gmail.`)
     .argument("template", "email template to use")
     .requiredOption(
       "-c, --contacts <contacts>",
@@ -65,6 +66,8 @@ export default function DraftAndSendCommand(program: Command) {
         console.log(chalk.green(`✅ Saved ${emails.length} drafts to ${chalk.cyan(options.outDir)}`))
         return;
       }
+
+      console.log(chalk.cyan(` [Current Mailbox]: ${Config.currentMailbox}`));
 
       // Specify how to save
       const { nextOption } = await inquirer.prompt([{
@@ -124,6 +127,8 @@ export default function DraftAndSendCommand(program: Command) {
       }
     })
     .addHelpText('after', `
+${chalk.reset.bold("Addendum:")}
+    ${chalk.cyan.bold("NOTE: By default, this command only drafts emails. It will NOT send unless prompted.\n")}
     ${chalk.yellowBright.bold("~~~ ABOUT TEMPLATES ~~~")}
 
     ${"Templates can be expressed in any markup language you like."}
