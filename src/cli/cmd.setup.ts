@@ -9,11 +9,17 @@ import fs from 'fs';
 
 export default function SetupCommand(program: Command) {
     const root = program.command('setup')
-        .description('Configure the CLI.')
+        .description('Configure mailmerge-js.')
         .action(async () => {
             await setupOpenAI();
             await setupGmail();
-        });
+        })
+        .addHelpText('after',
+`${chalk.reset.bold("Addendum:")}
+        You will need an OpenAI API key and Google App credentials to fully configure this app.
+        Full instructions can be found here:
+        ${chalk.cyan.bold("https://github.com/WarmSaluters/mailmerge-js/blob/main/README.md#Installation")}
+`)
     root.command('openai').description('Set up OpenAI API key.').action(setupOpenAI);
     root.command('gmail').description('Set up Gmail.').action(setupGmail);
     root.command('reset').description('Reset the setup.').action(resetSetup)

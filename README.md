@@ -23,6 +23,14 @@ npm install -g mailmerge-js
 mailmerge setup
 ```
 
+Setup will guide you through the process of setting up your MailMerge-JS environment. 
+You will need an OpenAI API key and Google App credentials.
+
+### Setting up OpenAI API Key
+This tool requires an OpenAI developer API key. 
+You can sign up on [OpenAI's website](https://platform.openai.com/signup/).
+Get your API key from the [OpenAI API Keys page](https://platform.openai.com/api-keys).
+
 ### Setting up Google App Credentials
 This tool requires Google App credentials to draft and send emails. Here is how you can obtain those credentials:
 
