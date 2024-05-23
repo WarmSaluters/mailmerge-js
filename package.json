@@ -11,7 +11,7 @@
   },
   "postinstall": "echo '⚡ ZAP! Run mailmerge setup to get started. ⚡'",
   "scripts": {
-    "start": "npm run build && NODE_NO_WARNINGS=1 node ./dist/src/cli/index.js",
+    "start": "npm run build && ./dist/src/cli/index.js",
     "release": "npm run build && npm version patch && npm run build && npm publish && git push",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --no-warnings
 import { Command } from "commander";
 import ComposeCommand from "./cmd.compose.js";
 import SendCommand from "./cmd.send.js";
