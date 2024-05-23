@@ -2,6 +2,9 @@
 
 MailMerge-JS is a next-generation Gmail automation tool supercharged by AI. Effortlessly draft and send highly personalized templated emails without worrying about email templating and data massaging, all from your Gmail inbox.
 
+![demo](./demo.gif)
+
+
 ## How it Works
 
 MailMerge-JS leverages the power of OpenAI and the Gmail API to streamline the email drafting process. Write your templates in any format you prefer (HTML/Markdown/Text/Jinja) and loosely express variables and directives in pseudocode using double curly braces `{{ }}`. The AI will then generate the actual email content for you, synthesized against any data file format you provide.
