@@ -158,12 +158,16 @@ async function openListeningCallback(
 ) {
   const app = express();
   let server: http.Server | null = null;
+  let backupTimeout: NodeJS.Timeout | null = null;
 
   try {
     app.get("/oauth2callback", (req, res, next) => {
       callbackHandler(req, res, () => {
         // Close server after handling callback
         server?.close();
+        backupTimeout = setTimeout(() => {
+          server?.close();
+        }, 3000);
         next();
       });
     });
@@ -179,9 +183,8 @@ async function openListeningCallback(
       server?.on("close", resolve);
     });
   } catch (error) {
-    if (server) {
-      server.close();
-    }
+    console.error("Error during authentication:", error);
+    server?.close();
   }
 }
 
