@@ -7,7 +7,7 @@ export const requestLLM = async (messages: { role: string, content: string }[], 
     });
     const response = await openai.chat.completions.create({
         model: options?.model || "gpt-4o",
-        // @ts-ignore
+        // @ts-expect-error types definition wonkiness
         messages,
         response_format: { type: "json_object" },
     });

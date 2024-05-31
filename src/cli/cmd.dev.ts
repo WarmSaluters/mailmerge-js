@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { getCurrentMailbox, sendEmail } from "../lib/gmail.js";
+import { getCurrentMailbox } from "../lib/gmail.js";
 import { authorize } from "../lib/google-auth.js";
 
 export default function _DevCommand(program: Command) {

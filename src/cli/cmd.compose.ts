@@ -6,18 +6,17 @@ import ora from "ora";
 import showdown from "showdown";
 import { createDraft, sendEmail } from "../lib/gmail.js";
 import { authorize } from "../lib/google-auth.js";
-import { mailMergeAIBulk } from "../lib/mail-merge.js";
-import { getMockEmails } from "../lib/mocks.js";
-import { Email } from "../lib/types.js";
 import { getFileContents } from "../lib/utils.js";
 import { continueOrSkip } from "./prompt.js";
 import { EmailPreviewer } from "./preview.js";
 import inquirer from "inquirer";
 import { EmailSerializer } from "./serializer.js";
 import Config from "../lib/config.js";
+import { OpenAIChatRenderer } from "../lib/renderers/openai.js";
+import { MockRenderer } from "../lib/renderers/mock.js";
 
 export default function DraftAndSendCommand(program: Command) {
-  //@ts-ignore
+  //@ts-expect-error not typed correctly
   marked.use(markedTerminal());
 
   program
@@ -28,7 +27,7 @@ export default function DraftAndSendCommand(program: Command) {
       "-c, --contacts <contacts>",
       "contacts file to use for mail merge" + chalk.cyan.bold(" (required)")
     )
-    .option("-m, --model <model>", "ai model to use for drafting", "gpt-4o")
+    .option("-r, --renderer <renderer>", "renderer to use for drafting", "gpt-4o")
     .option("-l, --limit <limit>", "number of emails to draft")
     .option("--outDir <outDir>", "If provided, save drafts to this directory.")
     .option("--no-preview", "Don't show a preview of the emails.")
@@ -36,8 +35,10 @@ export default function DraftAndSendCommand(program: Command) {
     .action(async (template, options) => {
       // Drafting mail
       const spinner = ora("⚡ Composing emails...").start();
-      const emailFetcher = options.mock ? getMockEmails : getEmailsFromLLM;
-      const { emails, warnings } = await emailFetcher(template, options);
+      const renderer = await getRenderer(options);
+      const templateContents = await getFileContents(template);
+      const contactsContents = await getFileContents(options.contacts);
+      const { emails, warnings } = await renderer.render(templateContents, contactsContents, options);
       spinner.stop();
 
       if (warnings.length > 0) {
@@ -141,26 +142,18 @@ ${chalk.reset.bold("Addendum:")}
     `)
 }
 
-const getEmailsFromLLM = async (
-  template: any,
-  options: any
-): Promise<{ emails: Email[]; warnings: string[] }> => {
-  const { model, contacts, limit } = options;
+const getRenderer = async (options: any) => {
+  if (options.mock) {
+    return new MockRenderer();
+  }
 
-  const templateContents = await getFileContents(template);
-  const contactsContents = await getFileContents(contacts);
-  const response = await mailMergeAIBulk(
-    templateContents,
-    contactsContents,
-    model,
-    {
-      limit,
-    }
-  );
+  switch (options.model) {
+    case undefined:
+      return new OpenAIChatRenderer("gpt-4o");
+    case "mock":
+      return new MockRenderer();
+    default:
+      return new OpenAIChatRenderer(options.model);
+  }
+}
 
-  const responseJSON = JSON.parse(response ?? "{}");
-  return {
-    emails: responseJSON.emails ?? [],
-    warnings: responseJSON.warnings ?? [],
-  };
-};
