@@ -9,7 +9,7 @@ export type RenderResponse = {
     warnings: string[];
 }
 
-export interface BaseRenderer {
+export interface Renderer {
     render (templateContents: string, contactsContents: string, options: RenderInputOptions): Promise<RenderResponse>;
 }
 

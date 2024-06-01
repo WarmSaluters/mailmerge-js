@@ -1,7 +1,7 @@
 import { Email } from "../types.js";
-import { BaseRenderer, RenderInputOptions } from "./base.js";
+import { Renderer, RenderInputOptions } from "./base.js";
 
-export class MockRenderer implements BaseRenderer {
+export class MockRenderer implements Renderer {
   async render(template: string, contacts: string, options: RenderInputOptions) {
     return getMockEmails();
   }

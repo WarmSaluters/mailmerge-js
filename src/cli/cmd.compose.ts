@@ -12,8 +12,9 @@ import { EmailPreviewer } from "./preview.js";
 import inquirer from "inquirer";
 import { EmailSerializer } from "./serializer.js";
 import Config from "../lib/config.js";
-import { OpenAIChatRenderer } from "../lib/renderers/openai.js";
-import { MockRenderer } from "../lib/renderers/mock.js";
+import { Renderer, getRenderer } from "../lib/renderers/index.js";
+import { exit } from "process";
+import { OllamaMissingModelError, OllamaNotFoundError } from "../lib/ollama.js";
 
 export default function DraftAndSendCommand(program: Command) {
   //@ts-expect-error not typed correctly
@@ -27,18 +28,17 @@ export default function DraftAndSendCommand(program: Command) {
       "-c, --contacts <contacts>",
       "contacts file to use for mail merge" + chalk.cyan.bold(" (required)")
     )
-    .option("-r, --renderer <renderer>", "renderer to use for drafting", "gpt-4o")
+    .option("-r, --renderer <renderer>", "renderer to use for drafting " + chalk.yellow.bold("(see 'mailmerge renderers list' for options)"), "gpt-4o")
     .option("-l, --limit <limit>", "number of emails to draft")
     .option("--outDir <outDir>", "If provided, save drafts to this directory.")
     .option("--no-preview", "Don't show a preview of the emails.")
-    .option("--mock", "(developer) mock a response from the LLM")
     .action(async (template, options) => {
       // Drafting mail
       const spinner = ora("⚡ Composing emails...").start();
-      const renderer = await getRenderer(options);
+      const renderer = await getRenderer(options.renderer);
       const templateContents = await getFileContents(template);
       const contactsContents = await getFileContents(options.contacts);
-      const { emails, warnings } = await renderer.render(templateContents, contactsContents, options);
+      const { emails, warnings } = await tryRenderEmails(renderer, templateContents, contactsContents, options);
       spinner.stop();
 
       if (warnings.length > 0) {
@@ -142,18 +142,30 @@ ${chalk.reset.bold("Addendum:")}
     `)
 }
 
-const getRenderer = async (options: any) => {
-  if (options.mock) {
-    return new MockRenderer();
-  }
 
-  switch (options.model) {
-    case undefined:
-      return new OpenAIChatRenderer("gpt-4o");
-    case "mock":
-      return new MockRenderer();
-    default:
-      return new OpenAIChatRenderer(options.model);
+const tryRenderEmails = async (renderer: Renderer, templateContents: string, contactsContents: string, options: any) => {
+  try {
+    const { emails, warnings } = await renderer.render(templateContents, contactsContents, options);
+    return { emails, warnings };
+  } catch (error) {
+
+    console.log();
+
+    if (error instanceof OllamaNotFoundError) {
+      console.error(chalk.bold.red("\n[!] Error: Ollama is not running or not installed! You need this to run local models."));
+      console.log(chalk.reset("To install Ollama, download it from https://ollama.com/downloads\n"));
+      exit(1);
+    }
+
+    if (error instanceof OllamaMissingModelError) {
+      console.error(chalk.bold.red("\n[!] Error: " + error.message));
+      const missingModel = error.message.split("'", 3)[1]
+      console.log(chalk.reset(`\nTo proceed, you can pull the model by running: \n\n\t${chalk.yellow("ollama pull " + missingModel)}\n`));
+      exit(1);
+    }
+
+    console.error(chalk.bold.red("\n[!] Error: " + error));
+    exit(1);
   }
 }
 

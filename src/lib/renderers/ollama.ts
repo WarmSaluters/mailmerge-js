@@ -1,28 +1,17 @@
-import { requestLLM } from "../openai.js";
-import { Renderer, RenderInputOptions, RenderResponse } from "./base.js";
+import { Renderer, RenderInputOptions } from "./base.js";
+import { OllamaClient } from "../ollama.js";
+import chalk from "chalk";
 
-export class OpenAIChatRenderer implements Renderer {
-    model: string;
+export class OllamaRenderer implements Renderer {
+  model: string;
 
-    constructor (model: string) {
-        this.model = model;
-    }
+  constructor(model: string) {
+    this.model = model;
+  }
 
-    async render (templateContents: string, contactsContents: string, options: RenderInputOptions): Promise<RenderResponse> {
-        const response = await mailMergeAIBulk(
-            templateContents,
-            contactsContents,
-            this.model,
-            {
-              limit: options.limit,
-            }
-          );
-          const responseJSON = JSON.parse(response ?? "{}");
-          return {
-            emails: responseJSON.emails ?? [],
-            warnings: responseJSON.warnings ?? [],
-          };
-    }
+  async render(template: string, contacts: string, options: RenderInputOptions) {
+    return mailMergeAIBulk(template, contacts, this.model, options);
+  }
 }
 
 const mailMergeAIBulk = async (
@@ -38,13 +27,19 @@ const mailMergeAIBulk = async (
   const messages = [
     {
       role: "system",
-      content: "You are an intelligent email drafting tool for performing mail merges. You are given a list of contacts and an email template. You are asked to generate a list of emails.",
+      content: "You are an intelligent email drafting tool for performing mail merges. You are given a list of contacts and an email template. You are asked to generate a list of emails. ONLY RETURN IN JSON",
     },
     { role: "user", content: formatted },
   ];
 
-  const response = await requestLLM(messages, { model });
-  return response;
+  const response = await new OllamaClient().requestLLM(messages, { model });
+  
+  try {
+    const content = JSON.parse(response?.message?.content ?? "");
+    return content;
+  } catch (error) {
+    console.log(chalk.red("[!] Error parsing response:"), error);
+  }
 };
 
 const gptPrompt = `
@@ -60,7 +55,7 @@ const gptPrompt = `
 
     IMPORTANT: Unless explicitly given direction to do so or only for fixing grammar, DO NOT change the user's content or you will be penalized.
 
-    Return your answer in the following JSON format (the body should be formatted as markdown regardless of the template).
+    Return ONLY your answer in the following JSON format (the body should be formatted as markdown regardless of the template).
     {
         "emails": [
             {
