@@ -1,4 +1,11 @@
-import { Email } from "./types.js";
+import { Email } from "../types.js";
+import { Renderer, RenderInputOptions } from "./base.js";
+
+export class MockRenderer implements Renderer {
+  async render(template: string, contacts: string, options: RenderInputOptions) {
+    return getMockEmails();
+  }
+}
 
 const mockResponse = `{
     "emails": [
@@ -17,10 +24,11 @@ const mockResponse = `{
 }
 `;
 
-export const getMockEmails = (): { emails: Email[]; warnings: string[] } => {
+export const getMockEmails = (): { emails: Email[]; warnings: string[]; } => {
   const responseJSON = JSON.parse(mockResponse);
   return {
     emails: responseJSON.emails ?? [],
     warnings: responseJSON.warnings ?? [],
   };
 };
+

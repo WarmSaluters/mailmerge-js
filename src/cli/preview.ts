@@ -28,7 +28,7 @@ export class EmailPreviewer {
       });
 
       // Function to handle key press
-      // @ts-ignore
+      // @ts-expect-error typescript wonkiness
       rl.input.on("keypress", (str: string, key: any) => {
         // You can add your logic here to handle the key press
         if (key.sequence === "\u0003") {

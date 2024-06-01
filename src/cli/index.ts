@@ -7,6 +7,7 @@ import ConfigureHelp from "./help.js";
 import _DevCommand from "./cmd.dev.js";
 
 import packageJSON from "../../package.json" assert { type: "json" };
+import RenderersCommand from "./cmd.renderers.js";
 
 const program = new Command();
 program
@@ -25,6 +26,7 @@ program
 ConfigureHelp(program);
 SendCommand(program);
 ComposeCommand(program);
+RenderersCommand(program);
 SetupCommand(program);
 _DevCommand(program);
 

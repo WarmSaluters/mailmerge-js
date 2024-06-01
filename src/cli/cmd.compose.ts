@@ -6,18 +6,18 @@ import ora from "ora";
 import showdown from "showdown";
 import { createDraft, sendEmail } from "../lib/gmail.js";
 import { authorize } from "../lib/google-auth.js";
-import { mailMergeAIBulk } from "../lib/mail-merge.js";
-import { getMockEmails } from "../lib/mocks.js";
-import { Email } from "../lib/types.js";
 import { getFileContents } from "../lib/utils.js";
 import { continueOrSkip } from "./prompt.js";
 import { EmailPreviewer } from "./preview.js";
 import inquirer from "inquirer";
 import { EmailSerializer } from "./serializer.js";
 import Config from "../lib/config.js";
+import { Renderer, getRenderer } from "../lib/renderers/index.js";
+import { exit } from "process";
+import { OllamaMissingModelError, OllamaNotFoundError } from "../lib/ollama.js";
 
 export default function DraftAndSendCommand(program: Command) {
-  //@ts-ignore
+  //@ts-expect-error not typed correctly
   marked.use(markedTerminal());
 
   program
@@ -28,16 +28,17 @@ export default function DraftAndSendCommand(program: Command) {
       "-c, --contacts <contacts>",
       "contacts file to use for mail merge" + chalk.cyan.bold(" (required)")
     )
-    .option("-m, --model <model>", "ai model to use for drafting", "gpt-4o")
+    .option("-r, --renderer <renderer>", "renderer to use for drafting " + chalk.yellow.bold("(see 'mailmerge renderers list' for options)"), "gpt-4o")
     .option("-l, --limit <limit>", "number of emails to draft")
     .option("--outDir <outDir>", "If provided, save drafts to this directory.")
     .option("--no-preview", "Don't show a preview of the emails.")
-    .option("--mock", "(developer) mock a response from the LLM")
     .action(async (template, options) => {
       // Drafting mail
       const spinner = ora("⚡ Composing emails...").start();
-      const emailFetcher = options.mock ? getMockEmails : getEmailsFromLLM;
-      const { emails, warnings } = await emailFetcher(template, options);
+      const renderer = await getRenderer(options.renderer);
+      const templateContents = await getFileContents(template);
+      const contactsContents = await getFileContents(options.contacts);
+      const { emails, warnings } = await tryRenderEmails(renderer, templateContents, contactsContents, options);
       spinner.stop();
 
       if (warnings.length > 0) {
@@ -141,26 +142,30 @@ ${chalk.reset.bold("Addendum:")}
     `)
 }
 
-const getEmailsFromLLM = async (
-  template: any,
-  options: any
-): Promise<{ emails: Email[]; warnings: string[] }> => {
-  const { model, contacts, limit } = options;
 
-  const templateContents = await getFileContents(template);
-  const contactsContents = await getFileContents(contacts);
-  const response = await mailMergeAIBulk(
-    templateContents,
-    contactsContents,
-    model,
-    {
-      limit,
+const tryRenderEmails = async (renderer: Renderer, templateContents: string, contactsContents: string, options: any) => {
+  try {
+    const { emails, warnings } = await renderer.render(templateContents, contactsContents, options);
+    return { emails, warnings };
+  } catch (error) {
+
+    console.log();
+
+    if (error instanceof OllamaNotFoundError) {
+      console.error(chalk.bold.red("\n[!] Error: Ollama is not running or not installed! You need this to run local models."));
+      console.log(chalk.reset("To install Ollama, download it from https://ollama.com/downloads\n"));
+      exit(1);
     }
-  );
 
-  const responseJSON = JSON.parse(response ?? "{}");
-  return {
-    emails: responseJSON.emails ?? [],
-    warnings: responseJSON.warnings ?? [],
-  };
-};
+    if (error instanceof OllamaMissingModelError) {
+      console.error(chalk.bold.red("\n[!] Error: " + error.message));
+      const missingModel = error.message.split("'", 3)[1]
+      console.log(chalk.reset(`\nTo proceed, you can pull the model by running: \n\n\t${chalk.yellow("ollama pull " + missingModel)}\n`));
+      exit(1);
+    }
+
+    console.error(chalk.bold.red("\n[!] Error: " + error));
+    exit(1);
+  }
+}
+
