@@ -8,7 +8,7 @@ MailMerge-JS is a next-generation Gmail automation tool supercharged by AI. Effo
 
 ## How it Works
 
-MailMerge-JS leverages the power of OpenAI and the Gmail API to streamline the email drafting process. Write your templates in any format you prefer (HTML/Markdown/Text/Jinja) and loosely express variables and directives in pseudocode using double curly braces `{{ }}`. The AI will then generate the actual email content for you, synthesized against any data file format you provide.
+MailMerge-JS leverages the power of GenAI and the Gmail API to streamline the email drafting process. Write your templates in any format you prefer (HTML/Markdown/Text/Jinja) and loosely express variables and directives in pseudocode using double curly braces `{{ }}`. The AI will then generate the actual email content for you, synthesized against any data file format you provide.
 
 ## Features
 
@@ -28,13 +28,8 @@ mailmerge setup
 ```
 
 Setup will guide you through the process of setting up your MailMerge-JS environment.
-You will need an OpenAI API key and Google App credentials.
+To get the most out of this tool, you will need an OpenAI API key and Google App credentials.
 
-### Setting up OpenAI API Key
-
-This tool requires an OpenAI developer API key.
-You can sign up on [OpenAI's website](https://platform.openai.com/signup/).
-Get your API key from the [OpenAI API Keys page](https://platform.openai.com/api-keys).
 
 ### Setting up Google App Credentials
 
@@ -50,6 +45,19 @@ This tool requires Google App credentials to draft and send emails. Here is how 
 6. Download the JSON file
 
 **NOTICE (5/22/2024) - We used to provide a simple way to authorize via a hosted web server. This is no longer supported due to difficulties with getting Google App Approval. You will need to provide your own application credentials**
+
+### Setting up OpenAI API Key
+
+To use OpenAI features you will need an OpenAI developer API key (read more to see how you can use our tool with local LLMs)
+
+You can sign up on [OpenAI's website](https://platform.openai.com/signup/).
+Get your API key from the [OpenAI API Keys page](https://platform.openai.com/api-keys).
+
+### Setting up Local LLM with Ollama
+We also support using this tool with local language models thru Ollama. For example, to compose emails using llama3, you will feed the following
+flag to the `compose` command: `--renderer llama3`
+
+Install Ollama by following the instructions [here](https://ollama.com/download).
 
 ## Quickstart
 
