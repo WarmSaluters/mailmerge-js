@@ -1,6 +1,5 @@
 import { Renderer, RenderInputOptions } from "./base.js";
 import nunjucks from "nunjucks";
-import chalk from "chalk";
 import { parse } from "csv-parse/sync";
 
 export class NunjucksRenderer implements Renderer {
@@ -40,10 +39,7 @@ const mailMergeNunjucks = (
     const email = nunjucks.renderString(template, contact);
     emails.push({
       to: contact.email,
-      subject: nunjucks.renderString(
-        "Hello, {{ first_name }} {{ subject }}",
-        contact
-      ),
+      subject: nunjucks.renderString("Hello, {{ subject }}", contact),
       body: email,
     });
   }
