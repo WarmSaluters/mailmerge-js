@@ -30,7 +30,6 @@ mailmerge setup
 Setup will guide you through the process of setting up your MailMerge-JS environment.
 To get the most out of this tool, you will need an OpenAI API key and Google App credentials.
 
-
 ### Setting up Google App Credentials
 
 This tool requires Google App credentials to draft and send emails. Here is how you can obtain those credentials:
@@ -54,10 +53,15 @@ You can sign up on [OpenAI's website](https://platform.openai.com/signup/).
 Get your API key from the [OpenAI API Keys page](https://platform.openai.com/api-keys).
 
 ### Setting up Local LLM with Ollama
+
 We also support using this tool with local language models thru Ollama. For example, to compose emails using llama3, you will feed the following
 flag to the `compose` command: `--renderer llama3`
 
 Install Ollama by following the instructions [here](https://ollama.com/download).
+
+### Nunjucks (Non-AI Template Engine)
+
+We also support a non-AI version of this tool via Nunjucks. You need to modify your contact and template files according to the Nunjucks example provided in the `examples` folder. To compose emails using Nunjucks, use the following flag with the `compose` command: `--renderer nunjucks`.
 
 ## Quickstart
 
