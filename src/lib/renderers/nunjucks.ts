@@ -39,7 +39,7 @@ const mailMergeNunjucks = (
     const email = nunjucks.renderString(template, contact);
     emails.push({
       to: contact.email,
-      subject: nunjucks.renderString("Hello, {{ subject }}", contact),
+      subject: nunjucks.renderString("{{ subject }}", contact),
       body: email,
     });
   }
