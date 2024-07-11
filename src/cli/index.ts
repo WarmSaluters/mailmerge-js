@@ -5,8 +5,13 @@ import SendCommand from "./cmd.send.js";
 import SetupCommand from "./cmd.setup.js";
 import ConfigureHelp from "./help.js";
 import _DevCommand from "./cmd.dev.js";
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-import packageJSON from "../../package.json" assert { type: "json" };
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const packageJSON = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf-8'));
+
 import RenderersCommand from "./cmd.renderers.js";
 
 const program = new Command();
